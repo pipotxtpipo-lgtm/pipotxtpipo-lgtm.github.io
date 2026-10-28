@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>老挝艺术博物馆 · 澜沧金殿与沉香木雕数字典藏</title>
+<style>
+  :root{
+    --bg:#0d0b08;
+    --panel:#16130e;
+    --card:#1e1a13;
+    --line:#3a3223;
+    --gold:#c9a227;
+    --gold-l:#e6c86a;
+    --txt:#9a917f;
+    --txt-hi:#d8cdb4;
+    --serif:"Songti SC","Noto Serif SC","SimSun",serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 620px at 50% -10%, rgba(201,162,39,.10), transparent 62%),
+      radial-gradient(900px 500px at 50% 40%, rgba(120,86,30,.08), transparent 70%),
+      var(--bg);
+    color:var(--txt);
+    font-family:var(--serif);
+    line-height:1.9;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:rgba(201,162,39,.32);color:#fff;}
+
+  /* ---------- header ---------- */
+  header{
+    text-align:center;
+    padding:56px 22px 26px;
+    position:relative;
+  }
+  .badge{
+    display:inline-block;
+    border:1px solid var(--gold);
+    border-radius:999px;
+    padding:6px 22px;
+    font-size:11px;
+    letter-spacing:6px;
+    color:var(--gold-l);
+    text-indent:6px;
+    background:linear-gradient(180deg, rgba(201,162,39,.10), rgba(201,162,39,.02));
+    box-shadow:0 0 22px rgba(201,162,39,.14) inset;
+  }
+  h1{
+    margin:22px 0 10px;
+    font-size:clamp(1.65rem, 5vw, 3.1rem);
+    font-weight:400;
+    letter-spacing:clamp(4px, 1.5vw, 14px);
+    text-indent:clamp(4px, 1.5vw, 14px);
+    color:var(--gold-l);
+    text-shadow:0 0 18px rgba(201,162,39,.45), 0 0 46px rgba(201,162,39,.18), 0 2px 0 rgba(0,0,0,.6);
+  }
+  .sub{
+    margin:0;
+    font-size:clamp(.72rem, 1.7vw, .84rem);
+    letter-spacing:4px;
+    color:#7d7461;
+    text-indent:4px;
+  }
+  .divider{
+    margin:20px auto 0;
+    display:flex;align-items:center;justify-content:center;gap:14px;
+    color:var(--gold);
+    font-size:11px;
+    max-width:520px;
+  }
+  .divider::before,.divider::after{
+    content:"";
+    height:1px;flex:1;
+    background:linear-gradient(90deg, transparent, rgba(201,162,39,.55), transparent);
+  }
+
+  /* ---------- stage ---------- */
+  .stage{
+    position:relative;
+    max-width:1000px;
+    margin:34px auto 0;
+    padding:78px 20px 0;
+  }
+  .ambient{
+    position:absolute;inset:0 0 auto 0;height:420px;
+    background:radial-gradient(60% 100% at 50% 0%, rgba(201,162,39,.14), transparent 72%);
+    pointer-events:none;
+  }
+  .lamp{
+    position:absolute;top:12px;left:50%;transform:translateX(-50%);
+    width:150px;height:64px;z-index:4;pointer-events:none;
+  }
+  .lamp-stem{
+    position:absolute;left:50%;top:0;transform:translateX(-50%);
+    width:6px;height:16px;
+    background:linear-gradient(180deg,#3a3123,#6d5731);
+    border-radius:2px;
+  }
+  .lamp-head{
+    position:absolute;left:50%;top:14px;transform:translateX(-50%);
+    width:118px;height:26px;border-radius:5px 5px 3px 3px;
+    background:linear-gradient(180deg,#5b5035 0%, #2a2417 42%, #191509 100%);
+    border:1px solid rgba(201,162,39,.55);
+    box-shadow:0 2px 6px rgba(0,0,0,.8), inset 0 1px 0 rgba(230,200,106,.45);
+  }
+  .lamp-head::after{
+    content:"";position:absolute;left:12px;right:12px;bottom:-5px;height:9px;border-radius:50%;
+    background:radial-gradient(ellipse at 50% 0%, rgba(255,226,160,.95), rgba(255,190,90,.25) 46%, transparent 72%);
+    filter:blur(2px);
+  }
+  .lamp-halo{
+    position:absolute;left:50%;top:32px;transform:translateX(-50%);
+    width:300px;height:170px;
+    background:radial-gradient(ellipse at 50% 0%, rgba(255,214,140,.30), rgba(255,190,110,.10) 42%, transparent 72%);
+    filter:blur(8px);
+  }
+  .beam{
+    position:absolute;top:44px;left:50%;transform:translateX(-50%);
+    width:min(900px, 94%);height:640px;
+    clip-path:polygon(46.6% 0, 53.4% 0, 88% 100%, 12% 100%);
+    background:linear-gradient(180deg, rgba(255,218,150,.26) 0%, rgba(255,214,150,.10) 38%, rgba(255,214,150,.03) 66%, rgba(255,214,150,0) 88%);
+    filter:blur(10px);
+    mix-blend-mode:screen;
+    pointer-events:none;
+    z-index:3;
+  }
+
+  .frame-wrap{position:relative;z-index:2;}
+  .frame{
+    position:relative;
+    margin:0;
+    padding:14px;
+    background:linear-gradient(158deg,#31241a 0%, #221810 46%, #150e0a 100%);
+    border-radius:2px;
+    box-shadow:
+      inset 0 0 0 1px rgba(201,162,39,.28),
+      inset 0 2px 0 rgba(230,200,106,.12),
+      0 26px 55px rgba(0,0,0,.78),
+      0 4px 12px rgba(0,0,0,.7),
+      0 0 90px 10px rgba(0,0,0,.6);
+  }
+  .frame::before{
+    content:"";position:absolute;inset:10px;
+    border:1px solid rgba(201,162,39,.34);
+    pointer-events:none;z-index:4;
+    box-shadow:inset 0 0 18px rgba(0,0,0,.55);
+  }
+  #mainImg{
+    display:block;width:100%;
+    height:clamp(300px, 58vh, 620px);
+    object-fit:contain;
+    background:#070605;
+    cursor:zoom-in;
+    transition:filter .6s ease;
+    filter:none;
+  }
+  #mainImg.restored{
+    filter:saturate(1.65) contrast(1.08) brightness(1.04);
+  }
+  .glass{
+    position:absolute;inset:14px;pointer-events:none;z-index:3;
+    background:
+      linear-gradient(112deg,
+        rgba(255,255,255,.11) 0%,
+        rgba(255,255,255,.03) 16%,
+        rgba(255,255,255,0) 30%,
+        rgba(255,255,255,.035) 48%,
+        rgba(255,255,255,.13) 56%,
+        rgba(255,255,255,.05) 63%,
+        rgba(255,255,255,0) 74%),
+      linear-gradient(180deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 14%);
+  }
+
+  .nav{
+    position:absolute;top:calc(50% - 20px);z-index:5;
+    width:46px;height:46px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:26px;line-height:1;padding-bottom:4px;
+    color:var(--gold-l);cursor:pointer;
+    background:rgba(12,9,5,.62);
+    border:1px solid rgba(201,162,39,.55);
+    backdrop-filter:blur(3px);
+    transition:all .25s ease;
+    font-family:var(--serif);
+  }
+  .nav:hover{color:#fff3d0;border-color:var(--gold-l);box-shadow:0 0 18px rgba(201,162,39,.45), inset 0 0 12px rgba(201,162,39,.2);}
+  .nav.prev{left:-8px;}
+  .nav.next{right:-8px;}
+
+  /* pedestal */
+  .pedestal{
+    position:relative;
+    width:min(92%, 900px);
+    margin:0 auto;
+    z-index:1;
+  }
+  .pedestal-top{
+    height:15px;
+    background:linear-gradient(180deg,#513f26 0%, #332616 55%, #201710 100%);
+    border-top:1px solid rgba(230,200,106,.55);
+    box-shadow:0 -6px 16px rgba(255,214,150,.10), inset 0 -3px 8px rgba(0,0,0,.6);
+  }
+  .pedestal-body{
+    position:relative;
+    height:74px;
+    background:linear-gradient(180deg,#1d1710 0%, #120e09 60%, #0b0806 100%);
+    border-top:1px solid rgba(201,162,39,.16);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:inset 0 8px 22px rgba(0,0,0,.7);
+  }
+  .pedestal-body::after{
+    content:"";position:absolute;left:4%;right:4%;bottom:-26px;height:26px;
+    background:radial-gradient(ellipse at 50% 0%, rgba(0,0,0,.85), transparent 72%);
+    filter:blur(8px);
+  }
+  .plaque{
+    padding:7px 20px;
+    border:1px solid rgba(201,162,39,.62);
+    background:linear-gradient(180deg,#2a2113,#17110a);
+    color:var(--gold-l);
+    font-size:clamp(10px, 2.6vw, 12.5px);
+    letter-spacing:3.5px;
+    text-indent:3.5px;
+    box-shadow:inset 0 1px 0 rgba(230,200,106,.3), 0 2px 10px rgba(0,0,0,.7);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88%;
+  }
+
+  .meta-row{
+    max-width:900px;
+    margin:34px auto 0;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:14px;
+    font-size:11.5px;letter-spacing:3px;
+    color:#6f6754;
+    padding:0 4px;
+  }
+  .meta-row .num{color:var(--gold);letter-spacing:3px;}
+
+  /* ---------- info ---------- */
+  .wrap{max-width:900px;margin:0 auto;padding:0 22px;}
+  .info-card{
+    margin-top:26px;
+    background:linear-gradient(180deg, rgba(30,26,19,.86), rgba(20,17,12,.86));
+    border:1px solid var(--line);
+    border-left:3px solid var(--gold);
+    padding:30px clamp(18px, 3.4vw, 34px) 30px;
+    box-shadow:0 18px 44px rgba(0,0,0,.5);
+  }
+  .info-card .idx{
+    display:block;font-size:11px;letter-spacing:5px;color:var(--gold);opacity:.85;margin-bottom:8px;
+  }
+  .info-card h2{
+    margin:0 0 6px;
+    font-size:clamp(1.3rem, 3.4vw, 1.9rem);
+    font-weight:400;letter-spacing:6px;color:#ece0c2;
+  }
+  .info-card .meta{
+    font-size:12px;letter-spacing:2.4px;color:#8d836c;margin-bottom:18px;
+  }
+  .info-card .meta::before{content:"◆ ";color:var(--gold);font-size:9px;vertical-align:1px;}
+  .info-card p{
+    margin:0;
+    text-align:justify;
+    text-justify:inter-ideograph;
+    font-size:clamp(.92rem, 2.2vw, 1rem);
+    color:#b4a98f;
+    line-height:2.15;
+  }
+  .actions{
+    display:flex;flex-wrap:wrap;gap:12px;margin-top:26px;
+  }
+  .btn{
+    font-family:var(--serif);
+    font-size:12.5px;
+    letter-spacing:2.5px;
+    color:var(--gold-l);
+    background:linear-gradient(180deg, rgba(201,162,39,.13), rgba(201,162,39,.04));
+    border:1px solid rgba(201,162,39,.5);
+    border-radius:999px;
+    padding:10px 22px;
+    cursor:pointer;
+    transition:all .3s ease;
+    text-indent:2.5px;
+  }
+  .btn:hover{border-color:var(--gold-l);color:#fff4d4;box-shadow:0 0 20px rgba(201,162,39,.32);}
+  .btn.on{
+    color:#221a06;
+    background:linear-gradient(180deg,#e9cd7b,#c9a227);
+    border-color:#f0dda0;
+    box-shadow:0 0 26px rgba(201,162,39,.55), inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  .btn.live{
+    color:#ffe0dc;
+    background:linear-gradient(180deg, rgba(178,54,40,.55), rgba(120,32,24,.35));
+    border-color:#b9463a;
+    box-shadow:0 0 22px rgba(185,70,58,.42);
+  }
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+
+  /* ---------- voice ---------- */
+  .voice{margin-top:22px;}
+  .voice-btns{display:flex;flex-wrap:wrap;gap:12px;}
+  .script-card{
+    margin-top:16px;
+    background:linear-gradient(180deg, rgba(26,22,15,.9), rgba(18,15,10,.9));
+    border:1px solid var(--line);
+    border-left:3px solid rgba(201,162,39,.7);
+    padding:22px clamp(16px, 3vw, 28px);
+  }
+  .script-label{
+    font-size:11px;letter-spacing:4px;color:var(--gold);
+    margin-bottom:10px;
+  }
+  .script-label::before{content:"◆ ";font-size:8px;vertical-align:2px;}
+  .script-card p{
+    margin:0;text-align:justify;text-justify:inter-ideograph;
+    font-size:clamp(.88rem, 2.1vw, .96rem);
+    color:#a99e86;line-height:2.1;
+  }
+
+  /* ---------- collection ---------- */
+  .collection{max-width:1120px;margin:64px auto 0;padding:0 22px;}
+  .sec-title{
+    display:flex;align-items:center;gap:18px;
+    margin:0 0 8px;
+    font-weight:400;font-size:clamp(1rem, 2.6vw, 1.18rem);
+    letter-spacing:8px;color:var(--gold-l);text-indent:8px;
+  }
+  .sec-title::before,.sec-title::after{
+    content:"";height:1px;flex:1;
+    background:linear-gradient(90deg, transparent, rgba(201,162,39,.45), transparent);
+  }
+  .sec-note{
+    text-align:center;font-size:11.5px;letter-spacing:3px;color:#6d6553;
+    margin:0 0 30px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(120px, 1fr));
+    gap:16px;
+  }
+  .thumb{
+    position:relative;
+    background:linear-gradient(180deg,#1c1810,#12100a);
+    border:1px solid var(--line);
+    padding:8px 8px 10px;
+    cursor:pointer;
+    color:#a1977f;
+    font-family:var(--serif);
+    text-align:center;
+    transition:all .28s ease;
+  }
+  .thumb img{
+    display:block;width:100%;aspect-ratio:1/1;object-fit:cover;
+    filter:saturate(.85) brightness(.86);
+    transition:all .35s ease;
+  }
+  .thumb .no{
+    position:absolute;top:12px;left:12px;
+    font-size:9.5px;letter-spacing:1.5px;
+    color:rgba(230,200,106,.85);
+    background:rgba(8,6,3,.6);
+    padding:1px 5px;
+    border:1px solid rgba(201,162,39,.3);
+  }
+  .thumb .nm{
+    display:block;margin-top:9px;
+    font-size:11.5px;letter-spacing:1.6px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .thumb:hover{border-color:rgba(201,162,39,.7);transform:translateY(-3px);}
+  .thumb:hover img{filter:saturate(1) brightness(1);}
+  .thumb.active{
+    border-color:var(--gold);
+    box-shadow:0 0 0 1px rgba(201,162,39,.5), 0 0 24px rgba(201,162,39,.28);
+    color:var(--gold-l);
+  }
+  .thumb.active img{filter:none;}
+
+  footer{
+    max-width:900px;margin:76px auto 0;padding:30px 22px 56px;
+    border-top:1px solid rgba(58,50,35,.9);
+    text-align:center;
+  }
+  footer .mark{color:var(--gold);letter-spacing:6px;font-size:12px;margin-bottom:10px;}
+  footer p{margin:0;font-size:11.5px;line-height:2;letter-spacing:1.4px;color:#645c4b;}
+
+  /* ---------- overlay ---------- */
+  .overlay{
+    position:fixed;inset:0;z-index:100;
+    background:rgba(5,4,2,.94);
+    display:none;
+    align-items:center;justify-content:center;
+    flex-direction:column;
+    padding:40px 18px 20px;
+    backdrop-filter:blur(4px);
+  }
+  .overlay.open{display:flex;}
+  .overlay img{
+    max-width:92vw;max-height:82vh;
+    object-fit:contain;
+    border:1px solid rgba(201,162,39,.45);
+    box-shadow:0 0 70px rgba(0,0,0,.9), 0 0 40px rgba(201,162,39,.12);
+    cursor:zoom-out;
+  }
+  .overlay .cap{
+    margin-top:16px;
+    font-size:12px;letter-spacing:4px;color:var(--gold-l);
+    text-align:center;
+  }
+  .overlay .hint{
+    margin-top:6px;font-size:10.5px;letter-spacing:2px;color:#6d6553;
+  }
+  .overlay .close{
+    position:absolute;top:14px;right:18px;
+    width:40px;height:40px;border-radius:50%;
+    background:rgba(20,16,10,.7);
+    border:1px solid rgba(201,162,39,.5);
+    color:var(--gold-l);font-size:20px;line-height:1;
+    cursor:pointer;font-family:var(--serif);
+  }
+  .overlay .close:hover{border-color:var(--gold-l);color:#fff;}
+
+  @media (max-width:640px){
+    .stage{padding:64px 12px 0;}
+    .lamp{transform:translateX(-50%) scale(.82);}
+    .nav.prev{left:-4px;}
+    .nav.next{right:-4px;}
+    .nav{width:38px;height:38px;font-size:22px;}
+    .frame{padding:9px;}
+    .glass,.frame::before{inset:9px;}
+    #mainImg{height:clamp(240px, 46vh, 420px);}
+    .pedestal-body{height:60px;}
+    .grid{grid-template-columns:repeat(auto-fill, minmax(92px, 1fr));gap:11px;}
+    .thumb{padding:6px 6px 8px;}
+    .thumb .nm{font-size:10px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">世界文化遗产 · 澜沧匠艺</div>
+  <h1>老挝艺术博物馆</h1>
+  <p class="sub">LAO ART MUSEUM · 金殿佛艺与沉香木雕数字典藏</p>
+  <div class="divider">◆</div>
+</header>
+
+<main>
+  <section class="stage">
+    <div class="ambient"></div>
+    <div class="lamp">
+      <span class="lamp-stem"></span>
+      <span class="lamp-head"></span>
+      <span class="lamp-halo"></span>
+    </div>
+    <div class="beam"></div>
+
+    <div class="frame-wrap">
+      <button class="nav prev" id="prevBtn" aria-label="上一件">‹</button>
+      <figure class="frame">
+        <img id="mainImg" src="images/1.jpg" alt="金顶藻井">
+        <div class="glass"></div>
+      </figure>
+      <button class="nav next" id="nextBtn" aria-label="下一件">›</button>
+    </div>
+
+    <div class="pedestal">
+      <div class="pedestal-top"></div>
+      <div class="pedestal-body">
+        <div class="plaque"><span id="plaqueName">金顶藻井</span> · 馆藏陈列</div>
+      </div>
+    </div>
+
+    <div class="meta-row">
+      <span class="num" id="counter">01 / 12</span>
+      <span id="hintText">点击主图可全屏细看</span>
+      <span class="num" id="hintRight">◆ 数字典藏</span>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="info-card">
+      <span class="idx" id="artIndex">藏品 01</span>
+      <h2 id="artName">金顶藻井</h2>
+      <div class="meta" id="artMeta">馆藏 LA-001 · 金箔、朱漆、玻璃镜片镶嵌 · 佛殿天花</div>
+      <p id="artDesc"></p>
+      <div class="actions">
+        <button class="btn" id="colorBtn">✦ AI 色彩还原</button>
+        <button class="btn" id="zoomBtn">⤢ 全屏细看</button>
+      </div>
+    </section>
+
+    <section class="voice">
+      <div class="voice-btns">
+        <button class="btn" id="zhBtn">🔊 语音导览（中文）</button>
+        <button class="btn" id="enBtn">🔊 Voice Guide (English)</button>
+      </div>
+      <div class="script-card">
+        <div class="script-label" id="scriptLabel">讲解词 · 中文</div>
+        <p id="scriptText"></p>
+      </div>
+    </section>
+  </div>
+
+  <section class="collection">
+    <h2 class="sec-title">藏品陈列</h2>
+    <p class="sec-note">共十二件 · 点击切换展柜主图</p>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="mark">◆ 老挝艺术博物馆 ◆</div>
+  <p>本展为数字策展，图像来自公开影像资料，具体年代、材质与出土地点以馆方标注为准。<br>语音讲解由浏览器语音合成生成，音色因设备而异。</p>
+</footer>
+
+<div class="overlay" id="overlay">
+  <button class="close" id="closeBtn" aria-label="关闭">×</button>
+  <img id="overlayImg" src="images/1.jpg" alt="金顶藻井">
+  <div class="cap" id="overlayCap">金顶藻井</div>
+  <div class="hint">点击任意处或按 ESC 关闭 · ← → 切换藏品</div>
+</div>
+
+<script>
+const BG_ZH = "老挝的上座部佛教艺术自十四世纪澜沧王国立国后逐渐成形：殿宇以木构为骨，柱身、山墙与天花满敷金箔，再嵌玻璃镜片，灯火之下如繁星流转。琅勃拉邦古城于一九九五年列入世界文化遗产名录，这类金殿正是澜沧匠艺的活标本。";
+const BG_EN = "Lao Theravada art took shape after the Lan Xang kingdom rose in the fourteenth century. Halls were framed in timber, then covered in gold leaf and inset with mirrored glass, so that lamplight scatters like stars. Luang Prabang was inscribed on the World Heritage List in 1995, and halls such as these remain living evidence of Lan Xang craftsmanship.";
+const WOOD_ZH = "老挝木雕多取沉香、红木与柚木，匠人不先画稿，而是顺着木料的天然形态与纹理下凿，让佛像、那伽与山林神祇仿佛从木头里自己长出来。一件大料往往要雕数年，木色由浅转深，最后只上薄蜡，不施彩绘。";
+const WOOD_EN = "Lao carvers work agarwood, rosewood and teak without a drawn plan, following the grain and the natural silhouette of the block so that Buddhas, nagas and forest spirits seem to grow out of the wood itself. A single large piece can take years; the surface is finished with wax alone, never painted.";
+
+const artifacts = [
+  {
+    file:"images/1.jpg", name:"金顶藻井",
+    meta:"馆藏 LA-001 · 金箔、朱漆、玻璃镜片 · 佛殿天花",
+    desc:"层层内收的方格天花，像一池倒悬的金色莲花。每一格以朱漆打底、敷金箔、嵌镜片，再塑火焰、莲瓣与卷草纹；灯一亮，整片屋顶就被碎成千万点的光。",
+    zh:"抬头看这片天花。匠人先用木构把殿顶分成一格格内收的方井，再在井心敷金箔、嵌玻璃镜片，塑出火焰与莲瓣。灯光一照，镜片把光碎成无数细小光点，整片屋顶就像夜空倒悬在头顶。" + BG_ZH,
+    en:"Look up. The ceiling is divided into tiered coffers, each filled with lacquer, gold leaf and tiny mirrors set into flame and lotus motifs. Lamplight breaks into countless points, and the whole roof becomes a night sky turned upside down." + BG_EN
+  },
+  {
+    file:"images/2.jpg", name:"金柱山门 · 双象",
+    meta:"馆藏 LA-002 · 贴金木柱、彩绘木象 · 殿门内景",
+    desc:"门内两根通体贴金的立柱，柱身满刻菱形与卷草，柱脚以红色木象为座。大象在澜沧传统中是护法，也是王权的象征，立在门槛之内，替佛殿看守人间。",
+    zh:"进门先看这两根柱子。柱身通体贴金，刻满菱形格与卷草，柱脚各以一尊红色木象为座。在老挝传统里，大象既是护法神，也是王权的象征，所以被安放在门槛之内，替佛殿看守人间。" + BG_ZH,
+    en:"Two columns flank the doorway, sheathed in gold leaf and carved with diamond lattice and scrolling vines, each resting on a red wooden elephant. In Lao tradition the elephant is both guardian and emblem of kingship, placed just inside the threshold to keep watch." + BG_EN
+  },
+  {
+    file:"images/3.jpg", name:"万佛金柱",
+    meta:"馆藏 LA-003 · 金箔浮雕 · 殿内列柱",
+    desc:"柱身开出一层层小龛，每龛立一尊合十的佛像，自下而上密叠至梁底。观者立于柱间，人与佛、光与影被同等尺度地排列，殿内因此没有一处是空的。",
+    zh:"这些柱子上开出一层层小龛，每龛立一尊合十的佛像，从柱脚一直叠到梁底。人站在柱间，会发现自己和佛像被放在同一个尺度里观看——殿内因此没有一处留白。" + BG_ZH,
+    en:"Rows of small niches climb each column, every one holding a Buddha with palms joined, stacked from floor to beam. Standing between them, a visitor is measured on the same scale as the figures, and no surface of the hall is left empty." + BG_EN
+  },
+  {
+    file:"images/4.jpg", name:"金殿广庭",
+    meta:"馆藏 LA-004 · 殿内全景 · 金柱、镜面地坪",
+    desc:"广庭之中，金柱成列向深处退去，磨光的石地在脚下映出另一重殿宇。天花、柱、地面彼此反射，把有限的空间撑成一座没有尽头的金色厅堂。",
+    zh:"这片广庭里，金柱一列列向深处退去，磨光的石地在脚下映出另一重殿宇。天花、柱身与地面彼此反射，把有限的空间撑成一座看似没有尽头的金色厅堂。" + BG_ZH,
+    en:"Columns recede in ranks toward the far wall, while the polished floor returns a second hall beneath your feet. Ceiling, columns and stone reflect one another until the finite room seems to have no end." + BG_EN
+  },
+  {
+    file:"images/5.jpg", name:"双象护法之门",
+    meta:"馆藏 LA-005 · 门廊、那伽栏楯 · 殿前入口",
+    desc:"门楣作火焰状山花，两侧栏楯蜿蜒如那伽之身。入门者须从蛇神的脊背与大象的注视之间穿过——老挝寺院的门，从来不只是通道。",
+    zh:"门楣做成火焰状的山花，两侧栏楯蜿蜒如那伽之身。进门的人必须从蛇神的脊背与大象的注视之间穿过。在老挝寺院里，门从来不只是通道，它是一道把俗世留在外面的界线。" + BG_ZH,
+    en:"Above the door rises a flame-shaped pediment, and the balustrades on either side wind like the body of a naga. To enter, you pass between the serpent's back and the eyes of elephants; in a Lao temple the doorway is never merely a passage, but a boundary." + BG_EN
+  },
+  {
+    file:"images/6.jpg", name:"木中佛国",
+    meta:"馆藏 LA-006 · 沉香整料镂雕、贴金 · 佛龛装置",
+    desc:"一整块沉香被凿成山岩，佛坐于岩腹，弟子、僧众、村舍与飞鸟沿山势层层铺开。左右两幅金箔画映着余火，像给这座木山点了两盏灯。",
+    zh:"这是一整块沉香木。匠人把它凿成一座山，佛坐在岩腹之中，弟子、僧众、村舍和飞鸟顺着山势一层层铺开。两侧的两幅金箔画映着微光，像给这座木山点了两盏灯。" + WOOD_ZH,
+    en:"A single block of agarwood has been carved into a mountain, the Buddha seated in its belly while disciples, monks, houses and birds unfold in tiers down the slopes. Two gold-leaf panels on either side glow faintly, like lamps set beside a wooden mountain." + WOOD_EN
+  },
+  {
+    file:"images/7.jpg", name:"沉香群像长廊",
+    meta:"馆藏 LA-007 · 沉香、红木群雕 · 陈列长廊",
+    desc:"长廊两侧列着数十件木雕，人物、兽面与树根纠缠在一起，各自成峰。射灯从上方压下来，木料的油脂在光里泛出琥珀色的边。",
+    zh:"长廊两侧列着数十件木雕。人物、兽面与盘结的树根纠缠在一起，每一件都自己成一座山峰。射灯从上方压下来，沉香里的油脂在光里泛出一层琥珀色的边。" + WOOD_ZH,
+    en:"Dozens of carvings line the corridor, figures and beast masks tangled with knotted roots, each piece a peak of its own. Spotlights press down from above, and the resin in the wood glows amber along every edge." + WOOD_EN
+  },
+  {
+    file:"images/8.jpg", name:"那伽王木雕",
+    meta:"馆藏 LA-008 · 红木多层镂雕 · 那伽立像",
+    desc:"那伽昂首而立，鳞甲、鳍冠与火焰状的鬃毛被镂空成数层，前后透光。它既是水神，也是佛的护持者，常盘在寺阶两侧，把人间与佛界连成一道斜坡。",
+    zh:"这一尊那伽昂首而立。鳞甲、鳍冠和火焰状的鬃毛被镂空成好几层，光能从这一层穿到下一层。那伽既是水神，也是佛的护持者，通常盘在寺阶两侧，把人间和佛界连成一道斜坡。" + WOOD_ZH,
+    en:"The naga rears up, its scales, finned crest and flame-like mane cut through in several layers so light passes from one to the next. Part water deity, part protector of the Buddha, nagas usually coil along temple stairs, joining the human world to the sacred one." + WOOD_EN
+  },
+  {
+    file:"images/9.jpg", name:"木心之面",
+    meta:"馆藏 LA-009 · 沉香残料巧雕 · 人物头像",
+    desc:"匠人没有削平木料，而是让一张脸从粗粝的树皮与虫蛀的孔洞中浮出：眉眼已定，其余仍归山林。老挝木雕最动人的地方，往往在这种「未完成」里。",
+    zh:"注意看这件。匠人没有把木料削平，而是让一张脸从粗粝的树皮和虫蛀的孔洞里浮出来——眉眼已经定了，其余部分仍旧交还给山林。老挝木雕最动人的地方，常常就在这种「未完成」里。" + WOOD_ZH,
+    en:"Notice that the block was never smoothed flat. A face emerges from rough bark and worm-eaten hollows: the eyes and brow are resolved, while everything else is given back to the forest. The most moving Lao carvings often live in this unfinishedness." + WOOD_EN
+  },
+  {
+    file:"images/10.jpg", name:"三龛金身",
+    meta:"馆藏 LA-010 · 泥塑贴金、壁画、木柱 · 佛殿正壁",
+    desc:"正壁开出三座尖拱龛，各安一尊坐佛，龛楣作火焰尖塔。壁面满绘金底壁画，两侧立着风化过半的木柱与残像，时间在这里留下了另一半展品。",
+    zh:"正壁开出三座尖拱龛，每龛安放一尊坐佛，龛楣做成火焰状的尖塔。壁面满绘金底壁画，两侧立着风化过半的木柱和残缺的造像。修复者没有把残缺补齐，因为时间本身也是这里的一件展品。" + BG_ZH,
+    en:"Three pointed arches open in the end wall, each holding a seated Buddha beneath a flame finial. The wall behind is painted on a gold ground, while half-eroded posts and broken images stand to either side. Nothing has been filled in: time is exhibited here too." + BG_EN
+  },
+  {
+    file:"images/11.jpg", name:"丹墀画廊",
+    meta:"馆藏 LA-011 · 朱漆描金经柜板 · 陈列厅",
+    desc:"红毯一直铺到厅底，两侧立着朱漆描金的经柜门板，中央高台上供一尊坐佛。整间厅堂像一只合拢的经匣，把光收在中央那一小片金上。",
+    zh:"红毯一直铺到厅底，两侧立着一排朱漆描金的经柜门板，中央高台上供着一尊坐佛。整间厅堂像一只合拢的经匣，把所有光都收在中央那一小片金色上。" + BG_ZH,
+    en:"A red carpet runs to the far wall, flanked by lacquered and gold-traced cabinet panels, with a seated Buddha raised at the centre. The room closes like a manuscript box, gathering all its light into one small patch of gold." + BG_EN
+  },
+  {
+    file:"images/12.jpg", name:"木雕陈列厅",
+    meta:"馆藏 LA-012 · 沉香、柚木群雕与金箔画 · 展厅",
+    desc:"展台上高低错落地立着木雕：佛首、苦行者、兽面与盘根，各自被一束光单独照顾。墙上的金箔画只剩一片温热的黄，恰好做了这些木头的背景。",
+    zh:"展台上高低错落地立着木雕：佛首、苦行者、兽面和盘根，每一件都被一束光单独照顾。墙上的金箔画只剩一片温热的黄，正好做了这些木头的背景。这里陈列的不是年代，而是手艺人对一块木头的耐心。" + WOOD_ZH,
+    en:"Carvings stand at different heights on their plinths, a Buddha head, an ascetic, beast masks and coiled roots, each given its own beam of light. The gold-leaf paintings behind have faded to a warm yellow that suits the wood exactly. What is shown here is not chronology but patience." + WOOD_EN
+  }
+];
+
+const mainImg   = document.getElementById('mainImg');
+const grid      = document.getElementById('grid');
+const artName   = document.getElementById('artName');
+const artIndex  = document.getElementById('artIndex');
+const artMeta   = document.getElementById('artMeta');
+const artDesc   = document.getElementById('artDesc');
+const plaqueName= document.getElementById('plaqueName');
+const counter   = document.getElementById('counter');
+const scriptText= document.getElementById('scriptText');
+const scriptLabel=document.getElementById('scriptLabel');
+const colorBtn  = document.getElementById('colorBtn');
+const zhBtn     = document.getElementById('zhBtn');
+const enBtn     = document.getElementById('enBtn');
+const overlay   = document.getElementById('overlay');
+const overlayImg= document.getElementById('overlayImg');
+const overlayCap= document.getElementById('overlayCap');
+
+let current = 0;
+let restored = false;
+let panelLang = 'zh';
+let speakingLang = null;
+
+const pad = n => String(n).padStart(2, '0');
+
+/* build thumbnails */
+artifacts.forEach((a, i) => {
+  const b = document.createElement('button');
+  b.className = 'thumb';
+  b.type = 'button';
+  b.dataset.i = i;
+  b.innerHTML = '<span class="no">' + pad(i + 1) + '</span>' +
+                '<img src="' + a.file + '" alt="' + a.name + '" loading="lazy">' +
+                '<span class="nm">' + a.name + '</span>';
+  b.addEventListener('click', () => {
+    const wasSpeaking = speakingLang;
+    stopSpeak();
+    render(i);
+    scrollToStage();
+    if (wasSpeaking) speak(wasSpeaking);
+  });
+  grid.appendChild(b);
+});
+
+function scrollToStage(){
+  const stage = document.querySelector('.stage');
+  const y = stage.getBoundingClientRect().top + window.pageYOffset - 20;
+  window.scrollTo({ top: y, behavior: 'smooth' });
+}
+
+function setPanel(lang){
+  panelLang = lang;
+  const a = artifacts[current];
+  scriptLabel.textContent = lang === 'zh' ? '讲解词 · 中文' : 'Docent Script · English';
+  scriptText.textContent = lang === 'zh' ? a.zh : a.en;
+  scriptText.style.letterSpacing = lang === 'zh' ? '.3px' : '0';
+}
+
+function render(i){
+  current = (i + artifacts.length) % artifacts.length;
+  const a = artifacts[current];
+
+  mainImg.src = a.file;
+  mainImg.alt = a.name;
+  artName.textContent = a.name;
+  artIndex.textContent = '藏品 ' + pad(current + 1);
+  artMeta.textContent = a.meta;
+  artDesc.textContent = a.desc;
+  plaqueName.textContent = a.name;
+  counter.textContent = pad(current + 1) + ' / ' + pad(artifacts.length);
+
+  if (restored) mainImg.classList.add('restored'); else mainImg.classList.remove('restored');
+
+  setPanel(panelLang);
+
+  [...grid.children].forEach((el, idx) => el.classList.toggle('active', idx === current));
+
+  if (overlay.classList.contains('open')) {
+    overlayImg.src = a.file;
+    overlayImg.alt = a.name;
+    overlayCap.textContent = a.name + (restored ? ' · AI 色彩还原版' : '');
+  }
+}
+
+function go(d){
+  const wasSpeaking = speakingLang;
+  stopSpeak();
+  render(current + d);
+  if (wasSpeaking) speak(wasSpeaking);
+}
+
+/* color restore */
+colorBtn.addEventListener('click', () => {
+  restored = !restored;
+  mainImg.classList.toggle('restored', restored);
+  colorBtn.classList.toggle('on', restored);
+  colorBtn.textContent = restored ? '色彩已还原（点击复原）' : '✦ AI 色彩还原';
+  if (overlay.classList.contains('open')) {
+    overlayCap.textContent = artifacts[current].name + (restored ? ' · AI 色彩还原版' : '');
+  }
+});
+
+/* overlay / fullscreen */
+function openOverlay(){
+  overlayImg.src = artifacts[current].file;
+  overlayImg.alt = artifacts[current].name;
+  overlayCap.textContent = artifacts[current].name + (restored ? ' · AI 色彩还原版' : '');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeOverlay(){
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+mainImg.addEventListener('click', openOverlay);
+document.getElementById('zoomBtn').addEventListener('click', openOverlay);
+overlay.addEventListener('click', closeOverlay);
+overlayImg.addEventListener('click', closeOverlay);
+document.getElementById('closeBtn').addEventListener('click', closeOverlay);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && overlay.classList.contains('open')) closeOverlay();
+  if (overlay.classList.contains('open')) {
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); go(-1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+  }
+});
+
+/* nav buttons */
+document.getElementById('prevBtn').addEventListener('click', () => go(-1));
+document.getElementById('nextBtn').addEventListener('click', () => go(1));
+
+/* voice guide */
+const speechOK = 'speechSynthesis' in window;
+if (!speechOK) {
+  [zhBtn, enBtn].forEach(b => { b.disabled = true; b.textContent = '本设备不支持语音导览'; });
+}
+
+function updateBtns(){
+  zhBtn.textContent = speakingLang === 'zh' ? '⏹ 停止导览' : '🔊 语音导览（中文）';
+  enBtn.textContent = speakingLang === 'en' ? '⏹ Stop Voice Guide' : '🔊 Voice Guide (English)';
+  zhBtn.classList.toggle('live', speakingLang === 'zh');
+  enBtn.classList.toggle('live', speakingLang === 'en');
+}
+
+function stopSpeak(){
+  if (!speechOK) return;
+  if (speakingLang) {
+    try { window.speechSynthesis.cancel(); } catch (e) {}
+  }
+  speakingLang = null;
+  updateBtns();
+}
+
+function speak(lang){
+  if (!speechOK) return;
+  if (speakingLang === lang) { stopSpeak(); return; }
+
+  try { window.speechSynthesis.cancel(); } catch (e) {}
+  speakingLang = null;
+
+  const a = artifacts[current];
+  const text = lang === 'zh' ? a.zh : a.en;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
+  u.rate = lang === 'zh' ? 0.95 : 0.92;
+  u.pitch = 1;
+  u.volume = 1;
+
+  setPanel(lang);
+
+  u.onend = () => { if (speakingLang === lang) { speakingLang = null; updateBtns(); } };
+  u.onerror = () => { if (speakingLang === lang) { speakingLang = null; updateBtns(); } };
+
+  speakingLang = lang;
+  updateBtns();
+  window.speechSynthesis.speak(u);
+}
+
+zhBtn.addEventListener('click', () => speak('zh'));
+enBtn.addEventListener('click', () => speak('en'));
+
+/* keep speech in sync when leaving the page */
+window.addEventListener('beforeunload', () => { try { window.speechSynthesis.cancel(); } catch (e) {} });
+
+/* init */
+render(0);
+</script>
+</body>
+</html>
